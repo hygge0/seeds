@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.dao.ReceiveMessageDao">
+
+  <insert id="insert" parameterType="ReceiveMessage">
+    insert into to_receivemessage values(null,#{sendId},#{empId},1,null)
+  </insert>
+  
+  <select id="getReceiveInfo" resultType="map">
+  <![CDATA[
+
+    select receiveId,s.empId empId,createDate,openDate,messageTitle,s.sendId sendId,empName 
+    from to_receivemessage r INNER JOIN to_sendmessage s 
+    on r.sendID=s.sendID INNER JOIN tb_emp e 
+    on s.empId=e.empId where r.empId=#{empId} and r.messageState<>2
+    ]]>
+  </select>
+  
+  <select id="getSendId" resultType="ReceiveMessage" parameterType="int[]">
+    select * from to_receivemessage
+    <where>
+      empId in
+      <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </where>
+  </select>
+  
+  <update id="deleteMessage" parameterType="ReceiveMessage">
+    update to_receivemessage set messageState=2 where empId=#{empId}
+  </update>
+  
+  <delete id="deleteRMessage" parameterType="int[]">
+    delete from to_receivemessage 
+     <where>
+      empId in
+      <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
+  
+  <delete id="deleteOneReceive" parameterType="int">
+    delete from to_receivemessage where receiveId=#{receiveId}
+  </delete>
+  
+  <update id="updateRM" parameterType="int[]">
+    update to_receivemessage set messageState=2 
+    <where>
+      receiveId in
+      <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </where>
+  </update>
+  
+  <select id="getRMI" resultType="map">
+    select receiveId,s.empId empId,createDate,openDate,messageTitle,s.sendId sendId,empName 
+    from to_receivemessage r INNER JOIN to_sendmessage s 
+    on r.sendID=s.sendID INNER JOIN tb_emp e 
+    on s.empId=e.empId where receiveId=#{receiveId}
+  </select>
+</mapper>

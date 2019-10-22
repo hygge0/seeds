@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.dao.EmpDao">
+
+  <select id="getAll" resultType="emp">
+    select empId,empNo,empName,password from tb_emp 
+    order by convert(empName using GBK)
+  </select>
+  
+  <select id="getEmpCheck" resultType="emp">
+    select empId,empNo,empName,password from tb_emp 
+    where empNo=#{empNo} and password=#{password}  
+  </select>
+  
+  <select id="getAllEmp" resultType="map">
+    select empNo,empId,empName,position,empType,idCard,sex,TIMESTAMPDIFF(YEAR,birth,CURDATE()) age,birth,tel from tb_emp order by empNo
+  </select>
+  
+  <delete id="deleteEmp" parameterType="int[]">
+    delete from tb_emp
+    <where>
+      empId in
+      <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
+  
+  <update id="updateEmp" parameterType="emp">
+    update tb_emp 
+    <set>
+      <if test="password!=null">
+        password=#{password},
+      </if>
+      <if test="empName!=null">
+        empName=#{empName},
+      </if>
+      <if test="sex!=null">
+        sex=#{sex},
+      </if>
+      <if test="birth!=null">
+        birth=#{birth},
+      </if>
+      <if test="idCard!=null">
+        idCard=#{idCard},
+      </if>
+      <if test="email!=null">
+        email=#{email},
+      </if>
+      <if test="tel!=null">
+        tel=#{tel},
+      </if>
+      <if test="address!=null">
+        address=#{address},
+      </if>
+      <if test="position!=null">
+        position=#{position},
+      </if>
+      <if test="empType!=null">
+        empType=#{empType},
+      </if>
+      <if test="bankNo!=null">
+        bankNo=#{bankNo},
+      </if>
+      <if test="bankName!=null">
+        bankName=#{bankName},
+      </if>
+      <if test="sal!=null">
+        sal=#{sal},
+      </if>
+      <if test="comm!=null">
+        comm=#{comm},
+      </if>
+      <if test="subsidy!=null">
+        subsidy=#{subsidy},
+      </if>
+      <if test="hiredate!=null">
+        hiredate=#{hiredate},
+      </if>
+      <if test="descript!=null">
+        descript=#{descript}
+      </if>
+      <where>
+        empId=#{empId}
+      </where>
+    </set>
+  </update>
+  
+  <select id="selectUpd" resultType="emp">
+    select * from tb_emp where empId=#{empId}
+  </select>
+  
+  <insert id="insertEmp" parameterType="emp">
+    insert into tb_emp values(null,null,#{password},#{empName},#{sex},#{birth},#{idCard},#{email},#{tel},#{address},#{position},#{empType},#{bankNo},#{bankName},#{sal},#{comm},#{subsidy},#{hiredate},#{descript})
+  </insert>
+  
+  <select id="getRequestEmp" resultType="map">
+    select empNo,empId,empName,position,empType,idCard,sex,TIMESTAMPDIFF(YEAR,birth,CURDATE()) age,birth,tel from tb_emp 
+    <where>
+      <if test="empName!=null and empName!=''">
+        empName like concat('%',#{empName},'%')
+      </if>
+    </where>
+  </select>
+  
+  <select id="getEmpByPage" resultType="emp">
+    select * from tb_emp limit #{start},#{size}
+  </select>
+</mapper>
